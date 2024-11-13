@@ -1,0 +1,25 @@
+ctor_tag := "localhost/ctor"
+eval_tag := "localhost/eval"
+
+default:
+    just --choose
+
+[private]
+build_image tag containerfile context:
+    docker build -t {{tag}} -f {{containerfile}} {{context}}
+
+
+build_ctor: (build_image ctor_tag "samples/constructor/Containerfile" "samples/constructor")
+
+build_eval: (build_image eval_tag "samples/evaluator/Containerfile" "samples/evaluator")
+
+
+[private]
+minikube_load tag:
+    minikube image load {{tag}}
+
+load_ctor: (minikube_load ctor_tag)
+load_eval: (minikube_load eval_tag)
+
+build_load_ctor: build_ctor load_ctor
+build_load_eval: build_eval load_eval

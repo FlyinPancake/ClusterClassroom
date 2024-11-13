@@ -1,0 +1,23 @@
+apiVersion: crd.flyinpancake.com/v1
+kind: ClusterClassroom
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterclassroom
+    app.kubernetes.io/managed-by: kustomize
+  name: clusterclassroom-sample
+spec:
+  # TODO(user): Add fields here
+  namespace_prefix: "student"
+  constructor:
+    image: "localhost/ctor"
+    command:
+      - /create-nginx.sh
+    args: []
+    backoff_limit: 3
+    image_pull_policy: "Never"
+  evaluation:
+    image: "localhost/eval"
+    command: ["/evaluate-cluster.sh"]
+    backoff_limit: 3
+    image_pull_policy: "Never"
+  student_id: "ABC123"

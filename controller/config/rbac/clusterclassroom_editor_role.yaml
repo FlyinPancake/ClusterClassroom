@@ -1,0 +1,27 @@
+# permissions for end users to edit clusterclassrooms.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterclassroom
+    app.kubernetes.io/managed-by: kustomize
+  name: clusterclassroom-editor-role
+rules:
+- apiGroups:
+  - crd.flyinpancake.com
+  resources:
+  - clusterclassrooms
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - crd.flyinpancake.com
+  resources:
+  - clusterclassrooms/status
+  verbs:
+  - get
