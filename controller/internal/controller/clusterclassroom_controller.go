@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -176,7 +175,11 @@ func (r *ClusterClassroomReconciler) Reconcile(ctx context.Context, req ctrl.Req
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-
+	// get the latest version of the object
+	if err := r.Get(ctx, client.ObjectKeyFromObject(&classRoom), &classRoom); err != nil {
+		logger.Error(err, "Failed to get the latest version of the object")
+		return ctrl.Result{}, err
+	}
 	// update the job phase
 	if constructor_job.Status.Succeeded > 0 {
 		classRoom.Status.ConstructorJobPhase = "Completed"
@@ -193,6 +196,11 @@ func (r *ClusterClassroomReconciler) Reconcile(ctx context.Context, req ctrl.Req
 
 	evaluatorJob, err := r.getOrCreateEvaluatorJob(ctx, classRoom)
 	if err != nil {
+		return ctrl.Result{}, err
+	}
+
+	if err := r.Get(ctx, client.ObjectKeyFromObject(&classRoom), &classRoom); err != nil {
+		logger.Error(err, "Failed to get the latest version of the object")
 		return ctrl.Result{}, err
 	}
 
@@ -508,69 +516,69 @@ func (r *ClusterClassroomReconciler) createRoleBinding(
 	return roleBinding.Name, nil
 }
 
-func (r *ClusterClassroomReconciler) getServiceAccountToken(ctx context.Context, namespaceName string) (string, error) {
-	logger := log.FromContext(ctx)
+// func (r *ClusterClassroomReconciler) getServiceAccountToken(ctx context.Context, namespaceName string) (string, error) {
+// 	logger := log.FromContext(ctx)
 
-	// Get the ServiceAccount
-	sa := &corev1.ServiceAccount{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      "student",
-			Namespace: namespaceName,
-		},
-	}
+// 	// Get the ServiceAccount
+// 	sa := &corev1.ServiceAccount{
+// 		ObjectMeta: metav1.ObjectMeta{
+// 			Name:      "student",
+// 			Namespace: namespaceName,
+// 		},
+// 	}
 
-	if err := r.Get(ctx, client.ObjectKeyFromObject(sa), sa); err != nil {
-		logger.Error(err, "Failed to get ServiceAccount")
-		return "", err
-	}
+// 	if err := r.Get(ctx, client.ObjectKeyFromObject(sa), sa); err != nil {
+// 		logger.Error(err, "Failed to get ServiceAccount")
+// 		return "", err
+// 	}
 
-	// Find the Secret associated with the ServiceAccount
-	if len(sa.Secrets) == 0 {
-		// create a new secret for the service account
-		secret := &corev1.Secret{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "student-token",
-				Namespace: namespaceName,
-				Annotations: map[string]string{
-					"kubernetes.io/service-account.name": "student", // Bind to the ServiceAccount
-				},
-			},
-		}
+// 	// Find the Secret associated with the ServiceAccount
+// 	if len(sa.Secrets) == 0 {
+// 		// create a new secret for the service account
+// 		secret := &corev1.Secret{
+// 			ObjectMeta: metav1.ObjectMeta{
+// 				Name:      "student-token",
+// 				Namespace: namespaceName,
+// 				Annotations: map[string]string{
+// 					"kubernetes.io/service-account.name": "student", // Bind to the ServiceAccount
+// 				},
+// 			},
+// 		}
 
-		if err := r.Create(ctx, secret); err != nil {
-			logger.Error(err, "Failed to create secret")
-			return "", err
-		}
+// 		if err := r.Create(ctx, secret); err != nil {
+// 			logger.Error(err, "Failed to create secret")
+// 			return "", err
+// 		}
 
-		logger.Info("Secret created", "Name", secret.Name, "Namespace", secret.Namespace)
+// 		logger.Info("Secret created", "Name", secret.Name, "Namespace", secret.Namespace)
 
-		// Update the ServiceAccount to use the new secret
-		if err := r.Get(ctx, client.ObjectKeyFromObject(sa), sa); err != nil {
-			logger.Error(err, "Failed to get ServiceAccount")
-			return "", err
-		}
-	}
+// 		// Update the ServiceAccount to use the new secret
+// 		if err := r.Get(ctx, client.ObjectKeyFromObject(sa), sa); err != nil {
+// 			logger.Error(err, "Failed to get ServiceAccount")
+// 			return "", err
+// 		}
+// 	}
 
-	// sleep 5 s
-	time.Sleep(5 * time.Second)
+// 	// sleep 5 s
+// 	time.Sleep(5 * time.Second)
 
-	secretName := sa.Secrets[0].Name
+// 	secretName := sa.Secrets[0].Name
 
-	secret := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      secretName,
-			Namespace: namespaceName,
-		},
-		Type: corev1.SecretTypeServiceAccountToken,
-	}
+// 	secret := &corev1.Secret{
+// 		ObjectMeta: metav1.ObjectMeta{
+// 			Name:      secretName,
+// 			Namespace: namespaceName,
+// 		},
+// 		Type: corev1.SecretTypeServiceAccountToken,
+// 	}
 
-	if err := r.Get(ctx, client.ObjectKeyFromObject(secret), secret); err != nil {
-		logger.Error(err, "Failed to get Secret")
-		return "", err
-	}
+// 	if err := r.Get(ctx, client.ObjectKeyFromObject(secret), secret); err != nil {
+// 		logger.Error(err, "Failed to get Secret")
+// 		return "", err
+// 	}
 
-	// Return the token from the secret
-	token := string(secret.Data["token"])
+// 	// Return the token from the secret
+// 	token := string(secret.Data["token"])
 
-	return token, nil
-}
+// 	return token, nil
+// }
