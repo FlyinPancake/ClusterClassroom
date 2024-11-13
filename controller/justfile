@@ -1,5 +1,6 @@
 ctor_tag := "localhost/ctor"
 eval_tag := "localhost/eval"
+controller_tag := "ghcr.io/flyinpancake/clusterclassroom:latest"
 
 default:
     just --choose
@@ -18,8 +19,22 @@ build_eval: (build_image eval_tag "samples/evaluator/Containerfile" "samples/eva
 minikube_load tag:
     minikube image load {{tag}}
 
-load_ctor: (minikube_load ctor_tag)
-load_eval: (minikube_load eval_tag)
+[private]
+kind_load tag:
+    kind load docker-image {{tag}}
+
+load_ctor: (kind_load ctor_tag)
+load_eval: (kind_load eval_tag)
 
 build_load_ctor: build_ctor load_ctor
 build_load_eval: build_eval load_eval
+
+build_controller:
+    make docker_build IMG={{controller_tag}}
+
+load_controller: (kind_load controller_tag)
+
+build_load_controller: build_controller load_controller
+deploy_controller:
+    make deploy IMG={{controller_tag}}
+

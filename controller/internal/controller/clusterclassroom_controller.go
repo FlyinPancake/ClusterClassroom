@@ -180,17 +180,24 @@ func (r *ClusterClassroomReconciler) Reconcile(ctx context.Context, req ctrl.Req
 		logger.Error(err, "Failed to get the latest version of the object")
 		return ctrl.Result{}, err
 	}
-	// update the job phase
+
+	// prepare patch data based on job phase
+	var phase string
 	if constructor_job.Status.Succeeded > 0 {
-		classRoom.Status.ConstructorJobPhase = "Completed"
+		phase = "Completed"
 	} else if constructor_job.Status.Failed > 0 {
-		classRoom.Status.ConstructorJobPhase = "Failed"
+		phase = "Failed"
 	} else {
-		classRoom.Status.ConstructorJobPhase = "Running"
+		phase = "Running"
 	}
 
-	if err := r.Status().Update(ctx, &classRoom); err != nil {
-		logger.Error(err, "Failed to update Setup status")
+	// create patch
+	patch := client.MergeFrom(classRoom.DeepCopy())
+	classRoom.Status.ConstructorJobPhase = phase
+
+	// apply patch
+	if err := r.Status().Patch(ctx, &classRoom, patch); err != nil {
+		logger.Error(err, "Failed to patch status")
 		return ctrl.Result{}, err
 	}
 
