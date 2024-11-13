@@ -1,0 +1,449 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: controller
+    control-plane: controller-manager
+  name: controller-system
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.16.4
+  name: clusterclassrooms.classroom.flyinpancake.com
+spec:
+  group: classroom.flyinpancake.com
+  names:
+    kind: ClusterClassroom
+    listKind: ClusterClassroomList
+    plural: clusterclassrooms
+    shortNames:
+    - cc
+    singular: clusterclassroom
+  scope: Cluster
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: ClusterClassroom is the Schema for the clusterclassrooms API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ClusterClassroomSpec defines the desired state of ClusterClassroom
+            properties:
+              constructor:
+                description: JobSpec defines a Job
+                properties:
+                  args:
+                    items:
+                      type: string
+                    type: array
+                  backoffLimit:
+                    format: int32
+                    type: integer
+                  command:
+                    items:
+                      type: string
+                    type: array
+                  image:
+                    type: string
+                  imagePullPolicy:
+                    description: PullPolicy describes a policy for if/when to pull
+                      a container image
+                    type: string
+                type: object
+              evaluator:
+                description: JobSpec defines a Job
+                properties:
+                  args:
+                    items:
+                      type: string
+                    type: array
+                  backoffLimit:
+                    format: int32
+                    type: integer
+                  command:
+                    items:
+                      type: string
+                    type: array
+                  image:
+                    type: string
+                  imagePullPolicy:
+                    description: PullPolicy describes a policy for if/when to pull
+                      a container image
+                    type: string
+                type: object
+              namespacePrefix:
+                type: string
+              studentId:
+                type: string
+            type: object
+          status:
+            description: ClusterClassroomStatus defines the observed state of ClusterClassroom
+            properties:
+              constructorJobPhase:
+                type: string
+              evaluatorJobPhase:
+                type: string
+              namespace:
+                type: string
+              namespacePhase:
+                type: string
+              serviceAccount:
+                type: string
+              serviceAccountRole:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: controller
+  name: controller-controller-manager
+  namespace: controller-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: controller
+  name: controller-leader-election-role
+  namespace: controller-system
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: controller
+  name: controller-clusterclassroom-editor-role
+rules:
+- apiGroups:
+  - classroom.flyinpancake.com
+  resources:
+  - clusterclassrooms
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - classroom.flyinpancake.com
+  resources:
+  - clusterclassrooms/status
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: controller
+  name: controller-clusterclassroom-viewer-role
+rules:
+- apiGroups:
+  - classroom.flyinpancake.com
+  resources:
+  - clusterclassrooms
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - classroom.flyinpancake.com
+  resources:
+  - clusterclassrooms/status
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: controller-manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - rolebindings
+  - secrets
+  - serviceaccounts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - classroom.flyinpancake.com
+  resources:
+  - clusterclassrooms
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - classroom.flyinpancake.com
+  resources:
+  - clusterclassrooms/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - classroom.flyinpancake.com
+  resources:
+  - clusterclassrooms/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - clusterroles
+  - roles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: controller-metrics-auth-role
+rules:
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: controller-metrics-reader
+rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: controller
+  name: controller-leader-election-rolebinding
+  namespace: controller-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: controller-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: controller-controller-manager
+  namespace: controller-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: controller
+  name: controller-manager-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: controller-manager-role
+subjects:
+- kind: ServiceAccount
+  name: controller-controller-manager
+  namespace: controller-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: controller-metrics-auth-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: controller-metrics-auth-role
+subjects:
+- kind: ServiceAccount
+  name: controller-controller-manager
+  namespace: controller-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: controller
+    control-plane: controller-manager
+  name: controller-controller-manager-metrics-service
+  namespace: controller-system
+spec:
+  ports:
+  - name: https
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    control-plane: controller-manager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: controller
+    control-plane: controller-manager
+  name: controller-controller-manager
+  namespace: controller-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      control-plane: controller-manager
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+      labels:
+        control-plane: controller-manager
+    spec:
+      containers:
+      - args:
+        - --metrics-bind-address=:8443
+        - --leader-elect
+        - --health-probe-bind-address=:8081
+        command:
+        - /manager
+        image: ghcr.io/flyinpancake/clusterclassroom:latest
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        name: manager
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 500m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: controller-controller-manager
+      terminationGracePeriodSeconds: 10
