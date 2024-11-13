@@ -15,7 +15,7 @@ pub struct JobSpec {
 
 #[derive(CustomResource, Debug, Serialize, Deserialize, Clone, JsonSchema)]
 #[kube(
-    group = "crd.flyinpancake.com",
+    group = "classroom.flyinpancake.com",
     version = "v1",
     kind = "ClusterClassroom"
 )]

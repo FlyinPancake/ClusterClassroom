@@ -1,0 +1,40 @@
+name: CLI Ci
+on:
+    push:
+    pull_request:
+jobs:
+    clippy:
+        name: Lint
+        runs-on: ubuntu-latest
+        steps:
+            - name: Clone the code
+              uses: actions/checkout@v4
+
+            - uses: actions-rust-lang/setup-rust-toolchain@v1
+              with:
+                toolchain: stable
+                components: clippy
+            - name: Run clippy
+              run: cargo clippy --all-targets --all-features -- -D warnings
+    
+    schemas:
+        name: Write schemas
+        runs-on: ubuntu-latest
+        steps:
+            - name: Clone the code
+              uses: actions/checkout@v4
+
+            - uses: actions-rust-lang/setup-rust-toolchain@v1
+            - name: Run schema generator
+              run: cargo run --all-features -- write-schemas
+              working-directory: cli
+            
+            - name: Commit Schemas
+              uses: devops-infra/action-commit-push@master
+              with:
+                github_token: "${{ secrets.GITHUB_TOKEN }}"
+                add_timestamp: true
+                commit_prefix: "[AUTO]"
+                commit_message: "Updated the schemas"
+                force: false
+        

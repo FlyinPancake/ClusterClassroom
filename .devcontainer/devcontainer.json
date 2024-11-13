@@ -11,7 +11,8 @@
                 "rust-lang.rust-analyzer",
                 "fill-labs.dependi",
                 "ms-kubernetes-tools.vscode-kubernetes-tools",
-                "ms-kubernetes-tools.kind-vscode"
+                "ms-kubernetes-tools.kind-vscode",
+                "tamasfe.even-better-toml"
             ]
         }
     },
