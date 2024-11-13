@@ -55,7 +55,7 @@
 #   Hide                            Hide the subsequent commands from the output
 #   Show                            Show the subsequent commands in the output
 
-Output docs/asstes/install-controller.webm
+Output docs/asstes/install-controller.gif
 
 # Require echo
 Require kubectl
@@ -90,3 +90,4 @@ Sleep 30s
 Hide 
 Type "kubectl delete -f https://raw.githubusercontent.com/FlyinPancake/ClusterClassroom/refs/heads/main/controller/dist/install.yaml" 
 Enter
+Sleep 10s

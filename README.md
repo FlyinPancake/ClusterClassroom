@@ -6,5 +6,5 @@
 
 ### Standalone Installation
 
-![Installation](docs/asstes/install-controller.webm)
+![Installation](docs/asstes/install-controller.gif)
 
