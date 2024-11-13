@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ClusterClassroomSpec",
+  "type": "object",
+  "required": [
+    "constructor",
+    "evaluator",
+    "namespacePrefix",
+    "studentId"
+  ],
+  "properties": {
+    "constructor": {
+      "$ref": "#/definitions/JobSpec"
+    },
+    "evaluator": {
+      "$ref": "#/definitions/JobSpec"
+    },
+    "namespacePrefix": {
+      "type": "string"
+    },
+    "studentId": {
+      "type": "string"
+    }
+  },
+  "definitions": {
+    "JobSpec": {
+      "type": "object",
+      "required": [
+        "backoffLimit",
+        "command",
+        "image"
+      ],
+      "properties": {
+        "args": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "backoffLimit": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0.0
+        },
+        "command": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "image": {
+          "type": "string"
+        },
+        "imagePullPolicy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}
