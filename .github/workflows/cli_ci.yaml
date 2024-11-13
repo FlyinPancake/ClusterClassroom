@@ -1,4 +1,6 @@
 name: CLI Ci
+permissions: 
+    contents: write
 on:
     push:
         paths:
