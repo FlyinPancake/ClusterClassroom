@@ -30,3 +30,15 @@ RUN sudo mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.i686 -o ttyd && \
     sudo mv ttyd /usr/local/bin/ttyd && \
     sudo chmod +x /usr/local/bin/ttyd
+
+# Install Kubebuidler
+
+RUN curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/linux/amd64 && \
+    chmod +x kubebuilder && \
+    sudo mv kubebuilder /usr/local/bin/
+
+# Install fzf
+RUN sudo apt-get update && sudo apt-get install fzf -y
+
+# Install just
+RUN cargo binstall just

@@ -5,16 +5,16 @@
 domain: flyinpancake.com
 layout:
 - go.kubebuilder.io/v4
-projectName: clusterclassroom
-repo: git.flyinpancake.com/flyinpancake/ClusterClassroom
+projectName: controller
+repo: github.com/flyinpancake/clusterclassroom
 resources:
 - api:
     crdVersion: v1
     namespaced: true
   controller: true
   domain: flyinpancake.com
-  group: crd
+  group: classroom
   kind: ClusterClassroom
-  path: git.flyinpancake.com/flyinpancake/ClusterClassroom/api/v1
+  path: github.com/flyinpancake/clusterclassroom/api/v1
   version: v1
 version: "3"

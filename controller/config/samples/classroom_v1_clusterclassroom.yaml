@@ -1,12 +1,11 @@
-apiVersion: crd.flyinpancake.com/v1
+apiVersion: classroom.flyinpancake.com/v1
 kind: ClusterClassroom
 metadata:
   labels:
-    app.kubernetes.io/name: clusterclassroom
+    app.kubernetes.io/name: controller
     app.kubernetes.io/managed-by: kustomize
   name: clusterclassroom-sample
 spec:
-  # TODO(user): Add fields here
   namespacePrefix: "student"
   constructor:
     image: "localhost/ctor"

@@ -33,7 +33,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	crdv1 "git.flyinpancake.com/flyinpancake/ClusterClassroom/api/v1"
+	classroomv1 "github.com/flyinpancake/clusterclassroom/api/v1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -77,7 +77,7 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
 
-	err = crdv1.AddToScheme(scheme.Scheme)
+	err = classroomv1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
 	// +kubebuilder:scaffold:scheme

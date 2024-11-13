@@ -5,7 +5,40 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - crd.flyinpancake.com
+  - ""
+  resources:
+  - namespaces
+  - rolebindings
+  - secrets
+  - serviceaccounts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - classroom.flyinpancake.com
   resources:
   - clusterclassrooms
   verbs:
@@ -17,16 +50,30 @@ rules:
   - update
   - watch
 - apiGroups:
-  - crd.flyinpancake.com
+  - classroom.flyinpancake.com
   resources:
   - clusterclassrooms/finalizers
   verbs:
   - update
 - apiGroups:
-  - crd.flyinpancake.com
+  - classroom.flyinpancake.com
   resources:
   - clusterclassrooms/status
   verbs:
   - get
   - patch
   - update
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - clusterroles
+  - roles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch

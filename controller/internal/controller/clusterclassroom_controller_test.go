@@ -21,13 +21,14 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	crdv1 "git.flyinpancake.com/flyinpancake/ClusterClassroom/api/v1"
+	classroomv1 "github.com/flyinpancake/clusterclassroom/api/v1"
 )
 
 var _ = Describe("ClusterClassroom Controller", func() {
@@ -37,21 +38,39 @@ var _ = Describe("ClusterClassroom Controller", func() {
 		ctx := context.Background()
 
 		typeNamespacedName := types.NamespacedName{
-			Name:      resourceName,
-			Namespace: "default", // TODO(user):Modify as needed
+			Name: resourceName,
+			// Namespace: "default", // TODO(user):Modify as needed
 		}
-		clusterclassroom := &crdv1.ClusterClassroom{}
+		clusterclassroom := &classroomv1.ClusterClassroom{}
 
 		BeforeEach(func() {
 			By("creating the custom resource for the Kind ClusterClassroom")
 			err := k8sClient.Get(ctx, typeNamespacedName, clusterclassroom)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &crdv1.ClusterClassroom{
+				resource := &classroomv1.ClusterClassroom{
 					ObjectMeta: metav1.ObjectMeta{
-						Name:      resourceName,
-						Namespace: "default",
+						Name: resourceName,
+						// Namespace: "default",
 					},
 					// TODO(user): Specify other spec details if needed.
+					Spec: classroomv1.ClusterClassroomSpec{
+						NamespacePrefix: "test",
+						Constructor: classroomv1.JobSpec{
+							Image:           "alpine",
+							Command:         []string{"echo"},
+							Args:            []string{"hello", "world"},
+							BackoffLimit:    1,
+							ImagePullPolicy: v1.PullIfNotPresent,
+						},
+						Evaluator: classroomv1.JobSpec{
+							Image:           "alpine",
+							Command:         []string{"echo"},
+							Args:            []string{"hello", "world"},
+							BackoffLimit:    1,
+							ImagePullPolicy: v1.PullIfNotPresent,
+						},
+						StudentId: "abc123",
+					},
 				}
 				Expect(k8sClient.Create(ctx, resource)).To(Succeed())
 			}
@@ -59,7 +78,7 @@ var _ = Describe("ClusterClassroom Controller", func() {
 
 		AfterEach(func() {
 			// TODO(user): Cleanup logic after each test, like removing the resource instance.
-			resource := &crdv1.ClusterClassroom{}
+			resource := &classroomv1.ClusterClassroom{}
 			err := k8sClient.Get(ctx, typeNamespacedName, resource)
 			Expect(err).NotTo(HaveOccurred())
 

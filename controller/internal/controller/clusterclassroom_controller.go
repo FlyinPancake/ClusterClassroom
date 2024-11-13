@@ -33,7 +33,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	crdv1 "git.flyinpancake.com/flyinpancake/ClusterClassroom/api/v1"
+	classroomv1 "github.com/flyinpancake/clusterclassroom/api/v1"
 )
 
 // ClusterClassroomReconciler reconciles a ClusterClassroom object
@@ -42,11 +42,19 @@ type ClusterClassroomReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=crd.flyinpancake.com,resources=clusterclassrooms,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=crd.flyinpancake.com,resources=clusterclassrooms/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=crd.flyinpancake.com,resources=clusterclassrooms/finalizers,verbs=update
-
-// const classroomFinalizer = "classroom.finalizers.flyinpancake.com"
+// +kubebuilder:rbac:groups=classroom.flyinpancake.com,resources=clusterclassrooms,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=classroom.flyinpancake.com,resources=clusterclassrooms/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=classroom.flyinpancake.com,resources=clusterclassrooms/finalizers,verbs=update
+// +kubebuilder:rbac:groups="",resources=namespaces,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups="",resources=serviceaccounts,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=roles,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups="",resources=rolebindings,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=batch,resources=jobs,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=roles,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterroles,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterrolebindings,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=*,resources=*,verbs=*
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -63,7 +71,7 @@ func (r *ClusterClassroomReconciler) Reconcile(ctx context.Context, req ctrl.Req
 	// TODO(user): your logic here
 	logger.Info("Reconciling ClusterClassroom")
 
-	var classRoom crdv1.ClusterClassroom
+	var classRoom classroomv1.ClusterClassroom
 
 	if err := r.Client.Get(ctx, req.NamespacedName, &classRoom); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
@@ -203,7 +211,7 @@ func (r *ClusterClassroomReconciler) Reconcile(ctx context.Context, req ctrl.Req
 // SetupWithManager sets up the controller with the Manager.
 func (r *ClusterClassroomReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&crdv1.ClusterClassroom{}).
+		For(&classroomv1.ClusterClassroom{}).
 		Owns(&corev1.Namespace{}).
 		Owns(&batchv1.Job{}).
 		// Watches(
@@ -211,7 +219,7 @@ func (r *ClusterClassroomReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		// 	handler.EnqueueRequestForOwner(
 		// 		r.Scheme,
 		// 		mgr.GetRESTMapper(),
-		// 		&crdv1.ClusterClassroom{},
+		// 		&classroomv1.ClusterClassroom{},
 		// 		handler.OnlyControllerOwner())).
 		Complete(r)
 }
@@ -235,11 +243,11 @@ func (r *ClusterClassroomReconciler) SetupWithManager(mgr ctrl.Manager) error {
 // 	return result
 // }
 
-func (r *ClusterClassroomReconciler) constructorJobName(classRoom crdv1.ClusterClassroom) string {
+func (r *ClusterClassroomReconciler) constructorJobName(classRoom classroomv1.ClusterClassroom) string {
 	return fmt.Sprintf("%s-constructor-job", classRoom.Status.Namespace)
 }
 
-func (r *ClusterClassroomReconciler) getOrCreateConstructorJob(ctx context.Context, classRoom crdv1.ClusterClassroom) (*batchv1.Job, error) {
+func (r *ClusterClassroomReconciler) getOrCreateConstructorJob(ctx context.Context, classRoom classroomv1.ClusterClassroom) (*batchv1.Job, error) {
 	logger := log.FromContext(ctx)
 	job := &batchv1.Job{}
 	err := r.Get(ctx, client.ObjectKey{Name: r.constructorJobName(classRoom), Namespace: classRoom.Status.Namespace}, job)
@@ -306,11 +314,11 @@ func (r *ClusterClassroomReconciler) getOrCreateConstructorJob(ctx context.Conte
 
 }
 
-func (r *ClusterClassroomReconciler) evaluatorJobName(classRoom crdv1.ClusterClassroom) string {
+func (r *ClusterClassroomReconciler) evaluatorJobName(classRoom classroomv1.ClusterClassroom) string {
 	return fmt.Sprintf("%s-evaluator-job", classRoom.Status.Namespace)
 }
 
-func (r *ClusterClassroomReconciler) getOrCreateEvaluatorJob(ctx context.Context, classRoom crdv1.ClusterClassroom) (*batchv1.Job, error) {
+func (r *ClusterClassroomReconciler) getOrCreateEvaluatorJob(ctx context.Context, classRoom classroomv1.ClusterClassroom) (*batchv1.Job, error) {
 	logger := log.FromContext(ctx)
 	job := &batchv1.Job{}
 	err := r.Get(ctx, client.ObjectKey{Name: r.evaluatorJobName(classRoom), Namespace: classRoom.Status.Namespace}, job)
@@ -376,7 +384,7 @@ func (r *ClusterClassroomReconciler) getOrCreateEvaluatorJob(ctx context.Context
 	return job, nil
 }
 
-func (r *ClusterClassroomReconciler) ownerRef(classRoom crdv1.ClusterClassroom) metav1.OwnerReference {
+func (r *ClusterClassroomReconciler) ownerRef(classRoom classroomv1.ClusterClassroom) metav1.OwnerReference {
 	return metav1.OwnerReference{
 		APIVersion: classRoom.APIVersion,
 		Kind:       classRoom.Kind,
@@ -386,13 +394,13 @@ func (r *ClusterClassroomReconciler) ownerRef(classRoom crdv1.ClusterClassroom) 
 	}
 }
 
-func (r *ClusterClassroomReconciler) adminServiceAccountName(classRoom crdv1.ClusterClassroom) string {
+func (r *ClusterClassroomReconciler) adminServiceAccountName(classRoom classroomv1.ClusterClassroom) string {
 	return fmt.Sprintf("%s-admin-sa", classRoom.Status.Namespace)
 }
 
 func (r *ClusterClassroomReconciler) creaetServiceAccount(
 	ctx context.Context,
-	classRoom crdv1.ClusterClassroom) (string, error) {
+	classRoom classroomv1.ClusterClassroom) (string, error) {
 	logger := log.FromContext(ctx)
 
 	serviceAccount := &corev1.ServiceAccount{
@@ -414,11 +422,11 @@ func (r *ClusterClassroomReconciler) creaetServiceAccount(
 	return serviceAccount.Name, nil
 }
 
-func (r *ClusterClassroomReconciler) adminRoleName(classRoom crdv1.ClusterClassroom) string {
+func (r *ClusterClassroomReconciler) adminRoleName(classRoom classroomv1.ClusterClassroom) string {
 	return fmt.Sprintf("%s-admin", classRoom.Status.Namespace)
 }
 
-func (r *ClusterClassroomReconciler) createAdminRole(ctx context.Context, classRoom crdv1.ClusterClassroom) error {
+func (r *ClusterClassroomReconciler) createAdminRole(ctx context.Context, classRoom classroomv1.ClusterClassroom) error {
 	logger := log.FromContext(ctx)
 	role := &rbacv1.Role{
 		ObjectMeta: metav1.ObjectMeta{
@@ -453,13 +461,13 @@ func (r *ClusterClassroomReconciler) createAdminRole(ctx context.Context, classR
 	return nil
 }
 
-func (r *ClusterClassroomReconciler) adminRoleBindingName(classRoom crdv1.ClusterClassroom) string {
+func (r *ClusterClassroomReconciler) adminRoleBindingName(classRoom classroomv1.ClusterClassroom) string {
 	return fmt.Sprintf("%s-admin-binding", classRoom.Status.Namespace)
 }
 
 func (r *ClusterClassroomReconciler) createRoleBinding(
 	ctx context.Context,
-	classRoom crdv1.ClusterClassroom) (string, error) {
+	classRoom classroomv1.ClusterClassroom) (string, error) {
 
 	logger := log.FromContext(ctx)
 
@@ -566,40 +574,3 @@ func (r *ClusterClassroomReconciler) getServiceAccountToken(ctx context.Context,
 
 	return token, nil
 }
-
-// func (r *ClusterClassroomReconciler) createKubeConfig(ctx context.Context, namespaceName, apiServerUrl, token string) (string, error) {
-// 	logger := log.FromContext(ctx)
-// 	config := clientcmdapi.NewConfig()
-
-// 	// Set cluster info
-// 	cluster := clientcmdapi.NewCluster()
-// 	cluster.Server = apiServerUrl
-// 	cluster.CertificateAuthorityData = nil // Use CA data from the cluster
-// 	config.Clusters["classroom"] = cluster // TODO: Make this dynamic
-
-// 	// Set user info with token
-// 	user := clientcmdapi.NewAuthInfo()
-// 	user.Token = token
-// 	config.AuthInfos["student"] = user // TODO: Make this dynamic
-
-// 	// Set context
-
-// 	context := clientcmdapi.NewContext()
-// 	context.Cluster = "classroom"
-// 	context.AuthInfo = "student"
-// 	context.Namespace = namespaceName
-// 	config.Contexts["classroom"] = context // TODO: Make this dynamic
-// 	config.CurrentContext = "classroom"
-
-// 	configYaml, err := clientcmd.Write(*config)
-
-// 	if err != nil {
-// 		logger.Error(err, "Failed to write kubeconfig", "error", err)
-// 		return "", err
-// 	}
-
-// 	// Print the kubeconfig file
-// 	fmt.Println(string(configYaml))
-
-// 	return string(configYaml), nil
-// }
