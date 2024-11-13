@@ -47,6 +47,7 @@ jobs:
 
             - name: Build Installer
               run: make build-installer IMG=${{ env.REGISTRY }}/${{ steps.image-name.outputs.lowercase }}:${{ env.IMAGE_TAG }}
+              working-directory: controller
             
             - name: Run the Action
               uses: devops-infra/action-commit-push@master
