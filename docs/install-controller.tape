@@ -55,7 +55,7 @@
 #   Hide                            Hide the subsequent commands from the output
 #   Show                            Show the subsequent commands in the output
 
-Output docs/asstes/install-controller.mp4
+Output docs/asstes/install-controller.webm
 
 # Require echo
 Require kubectl

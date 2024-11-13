@@ -2,9 +2,13 @@ on:
     pull_request:
         branches:
             - main
+        paths:  
+            - controller/**
     push:
         branches:
             - main
+        paths: 
+            - controller/**
 permissions:
   packages: write
   contents: write
