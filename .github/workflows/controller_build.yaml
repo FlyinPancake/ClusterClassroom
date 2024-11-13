@@ -5,11 +5,13 @@ on:
             - main
         paths:  
             - controller/**
+            - .github/workflows/controller_build.yaml
     push:
         branches:
             - main
         paths: 
             - controller/**
+            - .github/workflows/controller_build.yaml
 permissions:
   packages: write
   contents: write
@@ -61,7 +63,7 @@ jobs:
               uses: devops-infra/action-commit-push@master
               with:
                 github_token: "${{ secrets.GITHUB_TOKEN }}"
-                add_timestamp: true
+                add_timestamp: false
                 commit_prefix: "[AUTO]"
                 commit_message: "Updated the installer"
                 force: false
