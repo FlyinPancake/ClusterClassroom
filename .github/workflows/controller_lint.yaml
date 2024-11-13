@@ -2,7 +2,11 @@ name: Controller Lint
 
 on:
   push:
+    paths: 
+      - 'controller/**'
   pull_request:
+    paths: 
+      - 'controller/**'
 
 jobs:
   lint:

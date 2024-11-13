@@ -1,7 +1,11 @@
 name: CLI Ci
 on:
     push:
+        paths:
+            - 'cli/**'
     pull_request:
+        paths:
+            - 'cli/**'
 jobs:
     clippy:
         name: Lint

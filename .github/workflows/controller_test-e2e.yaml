@@ -2,7 +2,11 @@ name: Controller E2E Tests
 
 on:
   push:
+    paths:
+      - 'controller/**'
   pull_request:
+    paths:
+      - 'controller/**'
 
 jobs:
   test-e2e:
