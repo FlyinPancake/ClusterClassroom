@@ -14,8 +14,14 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
+            - name: Change String Case
+              uses: ASzc/change-string-case-action@v6
+              with:
+                  string: ${{ env.IMAGE_NAME }}
+              id: image-name
+
             - name: Build Docker image
-              run: make docker-build IMG=ghcr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+              run: make docker-build IMG=ghcr.io/${{ steps.image-name.outputs.lowercase }}:${{ env.IMAGE_TAG }}
               working-directory: controller
 
             - name: Log in to the Container registry
@@ -26,5 +32,5 @@ jobs:
                   password: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Push Docker image
-              run: make docker-push IMG=ghcr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+              run: make docker-push IMG=ghcr.io/${{ steps.image-name.outputs.lowercase }}:${{ env.IMAGE_TAG }}
               working-directory: controller
