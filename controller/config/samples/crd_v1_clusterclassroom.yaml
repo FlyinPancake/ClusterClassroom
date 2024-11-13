@@ -7,17 +7,17 @@ metadata:
   name: clusterclassroom-sample
 spec:
   # TODO(user): Add fields here
-  namespace_prefix: "student"
+  namespacePrefix: "student"
   constructor:
     image: "localhost/ctor"
     command:
       - /create-nginx.sh
     args: []
-    backoff_limit: 3
-    image_pull_policy: "Never"
-  evaluation:
+    backoffLimit: 3
+    imagePullPolicy: "Never"
+  evaluator:
     image: "localhost/eval"
     command: ["/evaluate-cluster.sh"]
-    backoff_limit: 3
-    image_pull_policy: "Never"
-  student_id: "ABC123"
+    backoffLimit: 3
+    imagePullPolicy: "Never"
+  studentId: "ABC123"
