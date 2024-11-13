@@ -1,0 +1,32 @@
+# Get the base devcontainer image
+FROM mcr.microsoft.com/devcontainers/base:bookworm
+
+USER vscode
+
+WORKDIR /home/vscode
+
+# Install rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/home/vscode/.cargo/bin:${PATH}"
+
+# Install go
+RUN curl -fsSL https://dl.google.com/go/go1.23.3.linux-amd64.tar.gz -o go.tar.gz && \
+    sudo mkdir -p /usr/local && \
+    sudo tar -C /usr/local -xzf go.tar.gz && \
+    rm go.tar.gz
+ENV PATH="/usr/local/go/bin:${PATH}"
+
+# Install cargo-binstall
+RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
+
+# Install vhs
+
+RUN sudo mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list && \
+    # Install ttyd from https://github.com/tsl0922/ttyd/releases
+    export DEBIAN_FRONTEND=noninteractive && \
+    sudo apt update && sudo apt install vhs ffmpeg -y && \
+    curl -fsSL https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.i686 -o ttyd && \
+    sudo mv ttyd /usr/local/bin/ttyd && \
+    sudo chmod +x /usr/local/bin/ttyd

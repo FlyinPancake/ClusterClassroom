@@ -1,0 +1,25 @@
+{
+    "build": {
+        "dockerfile": "Containerfile",
+        "context": ".."
+    },
+    "name": "ClusterClassrom Dev Container",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "golang.go",
+                "rust-lang.rust-analyzer",
+                "fill-labs.dependi",
+                "ms-kubernetes-tools.vscode-kubernetes-tools",
+                "ms-kubernetes-tools.kind-vscode"
+            ]
+        }
+    },
+    "features": {
+        "ghcr.io/mpriscella/features/kind": {
+            "version": "latest"
+        },
+        "ghcr.io/devcontainers/features/docker-in-docker": "latest",
+        "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": "latest"
+    }
+}

@@ -1,0 +1,15 @@
+version: 2
+
+updates:
+  - package-ecosystem: "cargo"
+    directory: "cli"
+    schedule:
+      interval: weekly
+  - package-ecosystem: "gomod"
+    directory: "controller"
+    schedule:
+      interval: weekly
+  - package-ecosystem: "devcontainers"
+    directory: ".devcontainer"
+    schedule:
+      interval: weekly
