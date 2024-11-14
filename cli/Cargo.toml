@@ -21,6 +21,7 @@ tokio = { version = "1.41.1", features = ["full"] }
 tracing-subscriber = "0.3.18"
 tracing = "0.1.40"
 serde_json = "1.0.132"
+either = "1.13.0"
 
 
 [features]

@@ -47,7 +47,7 @@ jobs:
               with:
                 github_token: "${{ secrets.GITHUB_TOKEN }}"
                 add_timestamp: false
-                commit_prefix: "[AUTO]"
+                commit_prefix: "[CI] "
                 commit_message: "Updated the schemas"
                 force: false
         

@@ -56,4 +56,12 @@ pub enum TaskCommand {
         /// The path to the task configuration file
         path: PathBuf,
     },
+    /// Run tests for a task
+    Test {
+        /// The path to the task configuration file
+        path: PathBuf,
+        #[clap(short, long, default_value = "false")]
+        /// Keep the evaluation pod after the test is done
+        keep: bool,
+    },
 }

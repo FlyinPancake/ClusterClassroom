@@ -17,7 +17,8 @@ pub struct JobSpec {
 #[kube(
     group = "classroom.flyinpancake.com",
     version = "v1",
-    kind = "ClusterClassroom"
+    kind = "ClusterClassroom",
+    status = "ClusterClassroomStatus"
 )]
 #[serde(rename_all = "camelCase")]
 pub struct ClusterClassroomSpec {
@@ -25,4 +26,13 @@ pub struct ClusterClassroomSpec {
     pub constructor: JobSpec,
     pub evaluator: JobSpec,
     pub student_id: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema, Clone, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct ClusterClassroomStatus {
+    pub namespace: String,
+    pub namespace_phase: String,
+    pub constructor_job_phase: String,
+    pub evaluator_job_phase: String,
 }
