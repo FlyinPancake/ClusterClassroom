@@ -181,19 +181,19 @@ func (r *ClusterClassroomReconciler) Reconcile(ctx context.Context, req ctrl.Req
 		return ctrl.Result{}, err
 	}
 
-	// prepare patch data based on job phase
-	var phase string
+	// prepare patch data based on job ctorPhase
+	var ctorPhase string
 	if constructor_job.Status.Succeeded > 0 {
-		phase = "Completed"
+		ctorPhase = "Completed"
 	} else if constructor_job.Status.Failed > 0 {
-		phase = "Failed"
+		ctorPhase = "Failed"
 	} else {
-		phase = "Running"
+		ctorPhase = "Running"
 	}
 
 	// create patch
 	patch := client.MergeFrom(classRoom.DeepCopy())
-	classRoom.Status.ConstructorJobPhase = phase
+	classRoom.Status.ConstructorJobPhase = ctorPhase
 
 	// apply patch
 	if err := r.Status().Patch(ctx, &classRoom, patch); err != nil {
@@ -211,13 +211,22 @@ func (r *ClusterClassroomReconciler) Reconcile(ctx context.Context, req ctrl.Req
 		return ctrl.Result{}, err
 	}
 
+	var evalPhase string
 	// update the job phase
 	if evaluatorJob.Status.Succeeded > 0 {
-		classRoom.Status.EvaluatorJobPhase = "Completed"
+		evalPhase = "Completed"
 	} else if evaluatorJob.Status.Failed > 0 {
-		classRoom.Status.EvaluatorJobPhase = "Failed"
+		evalPhase = "Failed"
 	} else {
-		classRoom.Status.EvaluatorJobPhase = "Running"
+		evalPhase = "Running"
+	}
+
+	patch = client.MergeFrom(classRoom.DeepCopy())
+	classRoom.Status.EvaluatorJobPhase = evalPhase
+
+	if err := r.Status().Patch(ctx, &classRoom, patch); err != nil {
+		logger.Error(err, "Failed to patch status")
+		return ctrl.Result{}, err
 	}
 
 	return ctrl.Result{}, nil
