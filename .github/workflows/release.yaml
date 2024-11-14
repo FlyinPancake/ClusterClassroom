@@ -8,7 +8,7 @@ permissions:
   packages: write
   deployments: write
   pages: write
-  
+
     
     
 env: 
@@ -32,7 +32,7 @@ jobs:
             - name: Create Release
               uses: softprops/action-gh-release@v2
               with:
-                  files: ./cli/target/release/cccli
+                  files: ./cli/target/release/cccli-unknown-linux-gnu-${{ github.ref_name }}
     
     build_controller:
         name: Build Controller
