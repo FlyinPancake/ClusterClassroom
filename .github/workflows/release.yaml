@@ -3,6 +3,13 @@ on:
   push:
     tags:
       - 'v*'
+permissions: 
+  contents: write
+  packages: write
+  deployments: write
+  pages: write
+  
+    
     
 env: 
   REGISTRY: ghcr.io
