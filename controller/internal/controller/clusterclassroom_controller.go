@@ -217,6 +217,9 @@ func (r *ClusterClassroomReconciler) Reconcile(ctx context.Context, req ctrl.Req
 		evalPhase = "Completed"
 	} else if evaluatorJob.Status.Failed > 0 {
 		evalPhase = "Failed"
+
+	} else if evaluatorJob.Spec.Suspend != nil && *evaluatorJob.Spec.Suspend {
+		evalPhase = "Pending"
 	} else {
 		evalPhase = "Running"
 	}
