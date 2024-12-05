@@ -158,11 +158,12 @@ async fn test_task_cr(path: PathBuf, keep: bool) -> anyhow::Result<()> {
             .await?;
         info!("Evaluator logs: \n{}", logs);
         // delete the evaluator job
-        let delete_params = DeleteParams {
-            propagation_policy: Some(kube::api::PropagationPolicy::Foreground),
-            ..Default::default()
-        };
+
         if !keep {
+            let delete_params = DeleteParams {
+                propagation_policy: Some(kube::api::PropagationPolicy::Foreground),
+                ..Default::default()
+            };
             let _ = jobs_api
                 .delete(&cc_evaluator_job_name, &delete_params)
                 .await?;

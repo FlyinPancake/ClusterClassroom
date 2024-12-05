@@ -4,7 +4,14 @@
 
 ## Installation
 
-### Standalone Installation
+### Install with the cli
 
-![Installation](docs/asstes/install-controller.gif)
+```bash
+cccli controller install
+```
 
+![Installation](docs/assets/install-controller.gif)
+
+## Create a task
+
+![Create task](docs/assets/deploy-task.gif)
