@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/FlyinPancake/ClusterClassroom/refs/heads/main/docs/schemas/task.json
+namespacePrefix: "student"
+constructor:
+  image: "localhost/ctor"
+  command:
+    - /create-nginx.sh
+  args: []
+  backoffLimit: 3
+  imagePullPolicy: "Never"
+evaluator:
+  image: "localhost/eval"
+  command: ["/evaluate-cluster.sh"]
+  backoffLimit: 3
+  imagePullPolicy: "Never"
+studentId: "ABC123"

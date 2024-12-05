@@ -55,39 +55,27 @@
 #   Hide                            Hide the subsequent commands from the output
 #   Show                            Show the subsequent commands in the output
 
-Output assets/install-controller.gif
+Output assets/deploy-task.gif
 
-# Require echo
-Require kubectl
-Require rg
-Require fish
+Require echo 
+Require cccli
 
-Set Shell "fish"
+Set Shell "bash"
 Set FontSize 32
 Set Width 2000
 Set Height 1200
-Set Theme catppuccin-mocha
-Set CursorBlink false
 Set Framerate 60
+Set Theme catppuccin-mocha
 
-Type@50ms "cccli controller install" 
-Sleep 2s
+Type "cccli task create task.yaml"
+Sleep 500ms  
 Enter
+Sleep 5s
+
+
+Type "cccli task test task.yaml" Sleep 500ms  Enter
 Sleep 15s
 
-Type "kubectl get crd  | rg flyinpancake"
-Sleep 500ms
-Enter
+Type "cccli task delete task.yaml" Sleep 500ms  Enter
+
 Sleep 15s
-
-Type "kubectl get po -n controller-system"
-Sleep 500ms
-Enter
-Sleep 30s
-
-# Screenshot docs/assets/install-controller.png
-
-Hide 
-Type "cccli controller uninstall" 
-Enter
-Sleep 10s
