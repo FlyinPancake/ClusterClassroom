@@ -10,7 +10,7 @@ schemars = "0.8.21"
 serde = { version = "1.0.215", features = ["derive"] }
 serde_yml = "0.0.12"
 thiserror = "2.0.3"
-kube = { version = "0.96.0", features = [
+kube = { version = "0.97.0", features = [
     "runtime",
     "derive",
     "jsonpatch",
